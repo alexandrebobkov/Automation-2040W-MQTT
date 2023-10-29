@@ -33,16 +33,19 @@ def blink_led(timer):
     led.toggle()
 
 def connect():
+    board.conn_led(False)
     wlan = network.WLAN(network.STA_IF)
+    print('Connecting to Wi-Fi ...')
+    wlan.active(True)
+    
     if not wlan.isconnected():
-        print('Connecting to Wi-Fi ...')
-        wlan.active(True)
+        time.sleep(5)
         wlan.connect('IoT_bots', '208208208')
         while not wlan.isconnected:
             board.conn_led(True)
-            time.sleep(250)
+            time.sleep(1)
             board.conn_led(False)
-            time.sleep(500)
+            time.sleep(1)
      
     if (wlan.isconnected()) == True:
         board.conn_led(True)
