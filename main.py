@@ -19,9 +19,9 @@ debounce_time = 0
 mqtt_host = "10.100.50.16"
 mqtt_username = ""
 mqtt_password = ""
-mqtt_publish_topic = "esp32/sw2"
+mqtt_publish_topic = "pico2040/sw2"
 mqtt_publish_topic_msg = "OK"
-mqtt_client_id = "esp32-prototype"
+mqtt_client_id = "pico2040-prototype"
 
 sw_A = Pin(12,Pin.IN, Pin.PULL_UP)
 sw_B = Pin(13,Pin.IN, Pin.PULL_UP)
