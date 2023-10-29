@@ -1,10 +1,14 @@
+#
+# by: Alexander Bobkov
+# October 29, 2023
+#
 import machine
-from machine import Pin
+from machine import Pin, Timer
 import time
 from automation import *
 import network
 #import secrets
-#import _thread
+import _thread
 from umqtt.simple import MQTTClient
 
 board = Automation2040W()
@@ -21,16 +25,12 @@ mqtt_client_id = "esp32-prototype"
 
 sw_A = Pin(12,Pin.IN, Pin.PULL_UP)
 sw_B = Pin(13,Pin.IN, Pin.PULL_UP)
-led = Pin(25, Pin.OUT)
+led = machine.Pin("LED", machine.Pin.OUT)
 
-def core1_task():
-    global LED
-    while True:
-        led.toggle()
-        #led.value(1)
-        #time.sleep(500)
-        #led.value(2)
-        time.sleep(500)
+timer = Timer()
+
+def blink_led(timer):
+    led.toggle()
 
 def connect():
     wlan = network.WLAN(network.STA_IF)
@@ -101,7 +101,7 @@ def mqtt_connect():
     return client
 def mqtt_reconnect():
     time.sleep(5)
-    machine.reset()
+    #machine.reset()
     
 # Try connect to a Wi-Fi
 try:
@@ -115,17 +115,18 @@ try:
 except OSError as e:
     mqtt_reconnect()
 
-#_thread.start_new_thread(core1_task, ())
-#time.sleep(1)
+timer.init(freq=2, mode=Timer.PERIODIC, callback=blink_led)
 
 while True:
-    if (board.switch_pressed(SWITCH_A)):
-        toggleA = not toggleA
-        board.switch_led(0, toggleA)
-        board.relay(0, toggleA)
-        print('Button A was pressed')        
+    #if (board.switch_pressed(SWITCH_A)):
+    #    toggleA = not toggleA
+    #    board.switch_led(0, toggleA)
+    #    board.relay(0, toggleA)
+    #    print('Button A was pressed')
+    # interrupts for each button; call function on failing edge
     sw_A.irq(trigger=Pin.IRQ_FALLING, handler=callback_A)
     sw_B.irq(trigger=Pin.IRQ_FALLING, handler=callback_B)
+    # subscribe this board to MQTT channel pico2040/sw2 to monitor messages sent to toggle switch 2
     client.subscribe("pico2040/sw2")
 #    client.publish(mqtt_publish_topic, mqtt_publish_topic_msg)
     time.sleep(0.5)
