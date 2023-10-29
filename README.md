@@ -19,6 +19,4 @@ Connect Pimoroni Automation 2040W board via MQTT. Specify MQTT subscription and 
 </div>
 
 ---
-### :fire: My Stats :
- 
 mqtt_publish_topic = "pico2040/sw2" (subscribed to the same topic).
